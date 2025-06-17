@@ -1,11 +1,11 @@
 import path from "path";
 import express from "express";
-import { walkSyncFiles } from "../helpers/common";
+import { UtilsHelper } from "../helpers/utils.helper";
 import { BaseError } from "../libs/core";
 import logger from "../helpers/logger";
 
 const router = express.Router() as any;
-const RouterFiles = walkSyncFiles(path.join(__dirname));
+const RouterFiles = UtilsHelper.walkSyncFiles(path.join(__dirname));
 
 RouterFiles.filter((f) => /(.*).route.js$/.test(f)).map((f) => {
   const { default: routes } = require(f);
