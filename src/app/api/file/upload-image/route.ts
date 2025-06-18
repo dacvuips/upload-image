@@ -7,7 +7,7 @@ const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID || "62359ea6c1553bd";
 // CORS Origins - you can set this in .env file as CORS_ORIGINS=origin1,origin2,origin3
 const CORS_ORIGINS = process.env.CORS_ORIGINS
   ? process.env.CORS_ORIGINS.split(",")
-  : ["https://xmmo.store"];
+  : ["https://xmmo.store", "https://storemmo.net"];
 
 // Helper function to check if origin is allowed
 function isOriginAllowed(origin: string): boolean {
