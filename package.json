@@ -6,7 +6,7 @@
   "license": "MIT",
   "scripts": {
     "start": "npm run serve",
-    "build": "npm run build-ts && npm run lint",
+    "build": "npm run watch-ts",
     "serve": "node dist/server.js",
     "watch-node": "nodemon --legacy-watch dist/server.js",
     "test": "cross-env NODE_ENV=test jest",
