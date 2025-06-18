@@ -1,41 +1,64 @@
-## Các động từ nên dùng trong message title
-Add = Thêm vào mã nguồn. Ví dụ: chức năng, test, thư viện
-Drop = Xóa khỏi mã nguồn. Ví dụ: chức năng, test, thư viện
-Fix = Sửa trong mã nguồn. Ví dụ: lỗi, typo
-Bump = Thay đổi version. Ví dụ: nâng phiên bản một thư viện đang sử dụng
-Make = Thay đổi công cụ hoặc quy trình build liên quan hạ tầng
-Refactor = Sửa đổi nhằm mục đích tái cấu trúc mã nguồn cũ. Ví dụ: Tách logic xử lý trong controller layer về business layer
-Optimize = Sửa đổi nhằm mục đích tối ưu hiệu năng cho mã nguồn cũ. Ví dụ: Tối ưu hiệu năng chức năng tìm kiếm đơn hàng bằng cách sử dụng thêm caching layer để giảm thời gian truy vấn từ cơ sở dữ liệu.
-Reformat = Sửa đổi nhằm mục đích định dạng lại code cũ. Ví dụ: xóa khoảng trắng, dòng trắng sai coding convention
-Rephrase = Sửa đổi liên quan tài liệu trong source code. Ví dụ comment trong source code (TODO / FIXME / …)
-Document = Sửa đổi liên quan đến tài liệu bên ngoài source code. Ví dụ thêm mô tả vào file README.md
+This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
-# GENERATE DATA TOOL
+## Getting Started
 
-install hygen
+First, create a `.env.local` file in the root directory and add your Imgur Client ID:
 
-`npm i -g hygen`
+```bash
+IMGUR_CLIENT_ID=your_imgur_client_id_here
+```
 
-## GENERATE COMPONENT
+Then, run the development server:
 
-`hygen generate component <name>`
+```bash
+npm run dev
+# or
+yarn dev
+# or
+pnpm dev
+# or
+bun dev
+```
 
-## GENERATE GRAPHQL
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-`hygen generate graphql <module> -f <function-name>`
+You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
 
-## GENERATE API
+## API Routes
 
-`hygen generate api <name>`
+This project includes Next.js API routes for image upload functionality:
 
-## GENERATE JOB
+- `GET /api/health` - Health check endpoint
+- `POST /api/file/upload-image` - Upload image to Imgur
 
-`hygen generate job <name>`
+### Testing the API
 
-## GENERATE PROVIDER
+You can test the upload endpoint using curl:
 
-`hygen generate provider <path> -n <name>`
+```bash
+curl -X POST http://localhost:3000/api/file/upload-image \
+  -F "image=@path/to/your/image.jpg"
+```
 
-## GENREATE REPOSITORY
+Or test the health endpoint:
 
-`hygen generate provider <path> -n <name>`
+```bash
+curl http://localhost:3000/api/health
+```
+
+This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+
+## Learn More
+
+To learn more about Next.js, take a look at the following resources:
+
+- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
+- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+
+You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+
+## Deploy on Vercel
+
+The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+
+Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.

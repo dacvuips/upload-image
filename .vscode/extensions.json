@@ -1,9 +1,0 @@
-{
-  "recommendations": [
-    "graphql.vscode-graphql",
-    "esbenp.prettier-vscode",
-    "bradlc.vscode-tailwindcss",
-    "austenc.tailwind-docs",
-    "rbbit.typescript-hero"
-  ]
-}
