@@ -1,0 +1,53 @@
+{
+  "port": 3000,
+  "domain": "http://localhost:3000",
+  "secret": "your-secret-key-here",
+  "mongo": {
+    "main": "mongodb://localhost:27017/midman"
+  },
+  "redis": {
+    "backend": "single",
+    "host": "localhost",
+    "port": 6379,
+    "password": "",
+    "prefix": "midman:",
+    "nodes": ""
+  },
+  "firebase": {
+    "credential": {
+      "type": "service_account",
+      "project_id": "your-project-id",
+      "private_key_id": "your-private-key-id",
+      "private_key": "your-private-key",
+      "client_email": "your-client-email",
+      "client_id": "your-client-id",
+      "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+      "token_uri": "https://oauth2.googleapis.com/token",
+      "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+      "client_x509_cert_url": "your-cert-url"
+    },
+    "webConfig": {
+      "authDomain": "your-project.firebaseapp.com"
+    }
+  },
+  "email": {
+    "from": "noreply@example.com"
+  },
+  "next": {
+    "enable": false,
+    "devMode": false
+  },
+  "helmet": {
+    "enable": true
+  },
+  "logger": {
+    "debug": false
+  },
+  "partnerFee": [],
+  "exchangeFee": [],
+  "security": {
+    "auth": {
+      "useSession": false
+    }
+  }
+}
