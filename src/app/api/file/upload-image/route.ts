@@ -4,13 +4,32 @@ import FormData from "form-data";
 
 const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID || "62359ea6c1553bd";
 
+export async function OPTIONS() {
+  return new NextResponse(null, {
+    status: 200,
+    headers: {
+      "Access-Control-Allow-Origin": "*",
+      "Access-Control-Allow-Methods": "POST, OPTIONS",
+      "Access-Control-Allow-Headers": "Content-Type",
+    },
+  });
+}
+
 export async function POST(request: NextRequest) {
   try {
     const formData = await request.formData();
     const imageFile = formData.get("image") as File;
 
     if (!imageFile) {
-      return NextResponse.json({ error: "No image uploaded" }, { status: 400 });
+      const response = NextResponse.json(
+        { error: "No image uploaded" },
+        { status: 400 }
+      );
+      // Set CORS headers
+      response.headers.set("Access-Control-Allow-Origin", "*"); // hoặc chỉ định origin cụ thể
+      response.headers.set("Access-Control-Allow-Methods", "POST, OPTIONS");
+      response.headers.set("Access-Control-Allow-Headers", "Content-Type");
+      return response;
     }
 
     // Convert File to base64
@@ -44,12 +63,22 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    return NextResponse.json(response.data);
+    const nextResponse = NextResponse.json(response.data);
+    // Set CORS headers
+    nextResponse.headers.set("Access-Control-Allow-Origin", "*"); // hoặc chỉ định origin cụ thể
+    nextResponse.headers.set("Access-Control-Allow-Methods", "POST, OPTIONS");
+    nextResponse.headers.set("Access-Control-Allow-Headers", "Content-Type");
+    return nextResponse;
   } catch (error) {
     console.error("Error uploading image:", error);
-    return NextResponse.json(
+    const errorResponse = NextResponse.json(
       { message: "Error uploading image" },
       { status: 500 }
     );
+    // Set CORS headers
+    errorResponse.headers.set("Access-Control-Allow-Origin", "*"); // hoặc chỉ định origin cụ thể
+    errorResponse.headers.set("Access-Control-Allow-Methods", "POST, OPTIONS");
+    errorResponse.headers.set("Access-Control-Allow-Headers", "Content-Type");
+    return errorResponse;
   }
 }
