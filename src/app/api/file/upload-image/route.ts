@@ -4,19 +4,38 @@ import FormData from "form-data";
 
 const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID || "62359ea6c1553bd";
 
-export async function OPTIONS() {
+// CORS Origins - you can set this in .env file as CORS_ORIGINS=origin1,origin2,origin3
+const CORS_ORIGINS = process.env.CORS_ORIGINS
+  ? process.env.CORS_ORIGINS.split(",")
+  : ["https://xmmo.store"];
+
+// Helper function to check if origin is allowed
+function isOriginAllowed(origin: string): boolean {
+  return CORS_ORIGINS.includes(origin) || CORS_ORIGINS.includes("*");
+}
+
+// Helper function to get CORS headers
+function getCorsHeaders(origin?: string) {
+  const allowedOrigin =
+    origin && isOriginAllowed(origin) ? origin : CORS_ORIGINS[0];
+  return {
+    "Access-Control-Allow-Origin": allowedOrigin,
+    "Access-Control-Allow-Methods": "POST, OPTIONS",
+    "Access-Control-Allow-Headers": "Content-Type",
+  };
+}
+
+export async function OPTIONS(request: NextRequest) {
+  const origin = request.headers.get("origin");
   return new NextResponse(null, {
     status: 200,
-    headers: {
-      "Access-Control-Allow-Origin": "*",
-      "Access-Control-Allow-Methods": "POST, OPTIONS",
-      "Access-Control-Allow-Headers": "Content-Type",
-    },
+    headers: getCorsHeaders(origin || undefined),
   });
 }
 
 export async function POST(request: NextRequest) {
   try {
+    const origin = request.headers.get("origin");
     const formData = await request.formData();
     const imageFile = formData.get("image") as File;
 
@@ -26,9 +45,11 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
       // Set CORS headers
-      response.headers.set("Access-Control-Allow-Origin", "*"); // hoặc chỉ định origin cụ thể
-      response.headers.set("Access-Control-Allow-Methods", "POST, OPTIONS");
-      response.headers.set("Access-Control-Allow-Headers", "Content-Type");
+      Object.entries(getCorsHeaders(origin || undefined)).forEach(
+        ([key, value]) => {
+          response.headers.set(key, value);
+        }
+      );
       return response;
     }
 
@@ -65,20 +86,25 @@ export async function POST(request: NextRequest) {
 
     const nextResponse = NextResponse.json(response.data);
     // Set CORS headers
-    nextResponse.headers.set("Access-Control-Allow-Origin", "*"); // hoặc chỉ định origin cụ thể
-    nextResponse.headers.set("Access-Control-Allow-Methods", "POST, OPTIONS");
-    nextResponse.headers.set("Access-Control-Allow-Headers", "Content-Type");
+    Object.entries(getCorsHeaders(origin || undefined)).forEach(
+      ([key, value]) => {
+        nextResponse.headers.set(key, value);
+      }
+    );
     return nextResponse;
   } catch (error) {
     console.error("Error uploading image:", error);
+    const origin = request.headers.get("origin");
     const errorResponse = NextResponse.json(
       { message: "Error uploading image" },
       { status: 500 }
     );
     // Set CORS headers
-    errorResponse.headers.set("Access-Control-Allow-Origin", "*"); // hoặc chỉ định origin cụ thể
-    errorResponse.headers.set("Access-Control-Allow-Methods", "POST, OPTIONS");
-    errorResponse.headers.set("Access-Control-Allow-Headers", "Content-Type");
+    Object.entries(getCorsHeaders(origin || undefined)).forEach(
+      ([key, value]) => {
+        errorResponse.headers.set(key, value);
+      }
+    );
     return errorResponse;
   }
 }
