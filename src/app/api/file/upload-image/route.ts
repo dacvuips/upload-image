@@ -75,36 +75,67 @@ export async function POST(request: NextRequest) {
           Authorization: `Client-ID ${IMGUR_CLIENT_ID}`,
           ...imgurFormData.getHeaders(),
         },
+        // Let us handle non-2xx responses so we can surface Imgur's error payload.
+        validateStatus: () => true,
       }
     );
 
-    if (!response.data.success) {
-      throw new Error(
-        response.data.data?.error || "Failed to upload image to Imgur"
-      );
-    }
+    const payload = response.data ?? { success: false };
+    const corsHeaders = getCorsHeaders(origin || undefined);
 
-    const nextResponse = NextResponse.json(response.data);
+    const nextResponse = NextResponse.json(payload, {
+      status: response.status || 200,
+    });
     // Set CORS headers
-    Object.entries(getCorsHeaders(origin || undefined)).forEach(
+    Object.entries(corsHeaders).forEach(
       ([key, value]) => {
         nextResponse.headers.set(key, value);
       }
     );
+
+    // Imgur uses { success: false, data: { error: ... } } on failures.
+    if (payload?.success !== true) {
+      console.error("Imgur upload failed payload:", payload);
+      return nextResponse;
+    }
+
     return nextResponse;
   } catch (error) {
     console.error("Error uploading image:", error);
     const origin = request.headers.get("origin");
+    const corsHeaders = getCorsHeaders(origin || undefined);
+
+    // If this is an Axios error, try to forward Imgur's response body.
+    if (axios.isAxiosError(error)) {
+      const imgurStatus =
+        typeof error.response?.status === "number"
+          ? error.response.status
+          : 500;
+      const imgurData = error.response?.data;
+
+      const errorResponse = NextResponse.json(
+        {
+          message: "Error uploading image",
+          imgurStatus: imgurStatus === 500 ? undefined : imgurStatus,
+          imgur: imgurData,
+        },
+        { status: imgurStatus }
+      );
+      // Set CORS headers
+      Object.entries(corsHeaders).forEach(([key, value]) => {
+        errorResponse.headers.set(key, value);
+      });
+      return errorResponse;
+    }
+
     const errorResponse = NextResponse.json(
       { message: "Error uploading image" },
       { status: 500 }
     );
     // Set CORS headers
-    Object.entries(getCorsHeaders(origin || undefined)).forEach(
-      ([key, value]) => {
-        errorResponse.headers.set(key, value);
-      }
-    );
+    Object.entries(corsHeaders).forEach(([key, value]) => {
+      errorResponse.headers.set(key, value);
+    });
     return errorResponse;
   }
 }
