@@ -4,20 +4,28 @@ import FormData from "form-data";
 
 const IMGUR_CLIENT_ID = process.env.IMGUR_CLIENT_ID || "62359ea6c1553bd";
 
-// CORS Origins - you can set this in .env file as CORS_ORIGINS=origin1,origin2,origin3
-const CORS_ORIGINS = process.env.CORS_ORIGINS
-  ? process.env.CORS_ORIGINS.split(",")
-  : ["https://xmmo.store", "https://storemmo.net"];
+// CORS Origins — set CORS_ORIGINS=origin1,origin2 in .env to restrict; omit to allow any origin
+const corsOriginsEnv = process.env.CORS_ORIGINS?.trim();
+const CORS_ORIGINS: string[] | null = (() => {
+  if (!corsOriginsEnv) return null;
+  const list = corsOriginsEnv.split(",").map((s) => s.trim()).filter(Boolean);
+  return list.length ? list : null;
+})();
 
 // Helper function to check if origin is allowed
 function isOriginAllowed(origin: string): boolean {
+  if (CORS_ORIGINS === null) return true;
   return CORS_ORIGINS.includes(origin) || CORS_ORIGINS.includes("*");
 }
 
 // Helper function to get CORS headers
 function getCorsHeaders(origin?: string) {
   const allowedOrigin =
-    origin && isOriginAllowed(origin) ? origin : CORS_ORIGINS[0];
+    CORS_ORIGINS === null
+      ? (origin ?? "*")
+      : origin && isOriginAllowed(origin)
+        ? origin
+        : CORS_ORIGINS[0];
   return {
     "Access-Control-Allow-Origin": allowedOrigin,
     "Access-Control-Allow-Methods": "POST, OPTIONS",
